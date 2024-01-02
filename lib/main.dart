@@ -26,24 +26,46 @@ class _AppState extends State<App> {
         backgroundColor: Colors.black,
         body: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            const Text(
-              'Click Count',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 100,
+            Flexible(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Click Count',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 100,
+                    ),
+                  ),
+                  Text(
+                    '$counter',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 100,
+                    ),
+                  ),
+                  IconButton(
+                    iconSize: 100,
+                    onPressed: add,
+                    icon: const Icon(Icons.add_box_outlined),
+                  ),
+                ],
               ),
             ),
-            Text(
-              '$counter',
-              style: const TextStyle(
+            Flexible(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 2,
                 color: Colors.white,
-                fontSize: 100,
+                child: const Column(
+                  children: [
+                    Text(
+                      'ttt',
+                      style: TextStyle(fontSize: 100),
+                    )
+                  ],
+                ),
               ),
-            ),
-            IconButton(
-              iconSize: 100,
-              onPressed: add,
-              icon: const Icon(Icons.add_box_outlined),
             ),
           ]),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:decimal/decimal.dart';
 
 void main() {
   runApp(const App());
@@ -36,12 +37,12 @@ class _AppState extends State<App> {
       } else if (buttonText == '=') {
         _calculateResult();
       } else if (buttonText == '±') {
-        double result = (double.parse(_expression) * -1);
-        if (result % 1 == 0) {
-          _expression = result.toInt().toString();
-        } else {
-          _expression = result.toString();
-        }
+        Decimal result = (Decimal.parse(_expression) * Decimal.fromInt(-1));
+
+        String test = result.toString();
+        print('test $test');
+
+        _expression = result.toString();
         _currentInput = _expression;
       } else {
         _expression += buttonText;
@@ -223,14 +224,14 @@ class _AppState extends State<App> {
 
   void _calculateResult() {
     try {
-      double result = eval(_expression);
+      Decimal result = eval(_expression);
 
-      if (result % 1 == 0) {
-        _expression = result.toInt().toString();
-      } else {
-        _expression = result.toString();
-      }
-
+      // if (result % 1 == 0) {
+      //   _expression = result.toInt().toString();
+      // } else {
+      //   _expression = result.toString();
+      // }
+      _expression = result.toString();
       _currentInput = _expression;
     } catch (e) {
       _expression = 'Error';
@@ -238,14 +239,14 @@ class _AppState extends State<App> {
     }
   }
 
-  double eval(String expression) {
+  Decimal eval(String expression) {
     print(expression);
     if (expression.contains('+')) {
       List<String> terms = expression.split('+');
-      List<double> numbers = terms.map((term) => double.parse(term)).toList();
+      List<Decimal> numbers = terms.map((term) => Decimal.parse(term)).toList();
       return numbers.reduce((a, b) => a + b);
     }
-    return double.parse(expression);
+    return Decimal.parse(expression);
   }
 
   // double eval(String expression) {

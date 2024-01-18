@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:decimal/decimal.dart';
 
 void main() {
   runApp(const App());
@@ -12,14 +13,8 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  int counter = 0;
   String _expression = '0';
   String _currentInput = '0';
-  void add() {
-    setState(() {
-      counter++;
-    });
-  }
 
   void _onButtonPressed(String buttonText) {
     setState(() {
@@ -36,12 +31,9 @@ class _AppState extends State<App> {
       } else if (buttonText == '=') {
         _calculateResult();
       } else if (buttonText == '±') {
-        double result = (double.parse(_expression) * -1);
-        if (result % 1 == 0) {
-          _expression = result.toInt().toString();
-        } else {
-          _expression = result.toString();
-        }
+        Decimal result = (Decimal.parse(_expression) * Decimal.fromInt(-1));
+
+        _expression = result.toString();
         _currentInput = _expression;
       } else {
         _expression += buttonText;
@@ -58,60 +50,28 @@ class _AppState extends State<App> {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Center(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
               Flexible(
                 flex: 1,
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Click Count',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 100,
-                        ),
-                      ),
-                      Text(
-                        '$counter',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 100,
-                        ),
-                      ),
-                      IconButton(
-                        iconSize: 100,
-                        onPressed: add,
-                        icon: const Icon(Icons.add_box_outlined),
-                      ),
-                    ],
+                  child: Text(
+                    _currentInput,
+                    style: const TextStyle(
+                      fontSize: 60,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
+              const SizedBox(
+                height: 20,
+              ),
               Flexible(
                 flex: 2,
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  //height: MediaQuery.of(context).size.height / 2,
-                  color: Colors.white,
                   child: Column(
                     children: [
-                      Flexible(
-                        flex: 1,
-                        child: Text(
-                          _currentInput,
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                        // TextField(
-                        //   decoration: InputDecoration(
-                        //     border: OutlineInputBorder(),
-                        //   ),
-                        // ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       Flexible(
                         flex: 1,
                         child: Row(
@@ -211,7 +171,7 @@ class _AppState extends State<App> {
         backgroundColor: MaterialStateProperty.all(Color(color)),
         shape: MaterialStateProperty.all(const CircleBorder()),
         fixedSize:
-            MaterialStateProperty.all(const Size(70.0, 70.0)), // 원하는 크기로 조절
+            MaterialStateProperty.all(const Size(80.0, 80.0)), // 원하는 크기로 조절
       ),
       onPressed: () => _onButtonPressed(buttonText),
       child: Text(
@@ -223,14 +183,9 @@ class _AppState extends State<App> {
 
   void _calculateResult() {
     try {
-      double result = eval(_expression);
+      Decimal result = eval(_expression);
 
-      if (result % 1 == 0) {
-        _expression = result.toInt().toString();
-      } else {
-        _expression = result.toString();
-      }
-
+      _expression = result.toString();
       _currentInput = _expression;
     } catch (e) {
       _expression = 'Error';
@@ -238,21 +193,25 @@ class _AppState extends State<App> {
     }
   }
 
-  double eval(String expression) {
-    print(expression);
+  Decimal eval(String expression) {
     if (expression.contains('+')) {
       List<String> terms = expression.split('+');
-      List<double> numbers = terms.map((term) => double.parse(term)).toList();
-      return numbers.reduce((a, b) => a + b);
+      List<Decimal> numbers = terms.map((term) => Decimal.parse(term)).toList();
+      return numbers.reduce((Decimal a, Decimal b) => a + b);
+    } else if (expression.contains('-')) {
+      List<String> terms = expression.split('-');
+      List<Decimal> numbers = terms.map((term) => Decimal.parse(term)).toList();
+      return numbers.reduce((Decimal a, Decimal b) => a - b);
+    } else if (expression.contains('X')) {
+      List<String> terms = expression.split('X');
+      List<Decimal> numbers = terms.map((term) => Decimal.parse(term)).toList();
+      return numbers.reduce((Decimal a, Decimal b) => a * b);
+    } else if (expression.contains('÷')) {
+      List<String> terms = expression.split('÷');
+      List<num> numbers = terms.map((term) => num.parse(term)).toList();
+      var divideValue = numbers.reduce((a, b) => a / b);
+      return Decimal.parse(divideValue.toString());
     }
-    return double.parse(expression);
+    return Decimal.parse(expression);
   }
-
-  // double eval(String expression) {
-  //   if (expression.contains('+')) {
-  //     _median += double.parse(expression.split('+')[0]);
-  //   }
-
-  //   return _median;
-  // }
 }

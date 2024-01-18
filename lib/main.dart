@@ -30,6 +30,11 @@ class _AppState extends State<App> {
         _currentInput = _expression;
       } else if (buttonText == '=') {
         _calculateResult();
+      } else if (buttonText == '%') {
+        Decimal result = (Decimal.parse(_expression) * Decimal.parse('0.01'));
+
+        _expression = result.toString();
+        _currentInput = _expression;
       } else if (buttonText == '±') {
         Decimal result = (Decimal.parse(_expression) * Decimal.fromInt(-1));
 
@@ -176,7 +181,10 @@ class _AppState extends State<App> {
       onPressed: () => _onButtonPressed(buttonText),
       child: Text(
         buttonText,
-        style: TextStyle(color: Color(textColor)),
+        style: TextStyle(
+          fontSize: buttonText == '00' ? 25 : 30,
+          color: Color(textColor),
+        ),
       ),
     );
   }
